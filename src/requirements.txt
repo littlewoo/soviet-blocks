@@ -1,0 +1,8 @@
+Requirements
+
+By iteration
+
+Iteration I (Basic Display):
+
+Window is displayed, shows game area, which shows current state of the game, 
+differentiating between pieces and empty areas. 
