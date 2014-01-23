@@ -10,6 +10,11 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
+/**
+ * Panel for displaying the game area. 
+ * 
+ * @author littlewoo
+ */
 public class GameAreaPanel extends JPanel {
 	private static int GRID_WIDTH = 10;
 	private static int GRID_HEIGHT = 25;
@@ -19,22 +24,40 @@ public class GameAreaPanel extends JPanel {
 	
 	private Piece[][] grid;
 	
+	/**
+	 * Create a new GameAreaPanel.
+	 */
 	public GameAreaPanel() {
 		setPreferredSize(new Dimension(IMG_WIDTH, IMG_HEIGHT));
 		
 	}
 	
+	/**
+	 * Update this panel with a new grid.
+	 * 
+	 * @param newGrid the Piece grid to update this panel with.
+	 */
 	public void update(Piece[][] newGrid) {
 		grid = newGrid;
 		paint(getGraphics());
 	}
 	
+	/**
+	 * Paint this component. Draw the grid as currently stored.
+	 * 
+	 */
+	@Override
 	public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         draw(g2);
     }
 	
+	/**
+	 * Draw this panel - draw the grid with the color of each path.
+	 * 
+	 * @param g the graphics to draw on.
+	 */
 	private void draw(Graphics2D g) {
 		for (int x=0; x<GRID_WIDTH; x++) {
 			for (int y=0; y<GRID_HEIGHT; y++) {
@@ -49,6 +72,13 @@ public class GameAreaPanel extends JPanel {
 		}
 	}
 	
+	/**
+	 * draw an individual square. 
+	 * 
+	 * @param loc the grid coordinates of the square to draw
+	 * @param colour the colour of the square
+	 * @param g the graphics to draw on
+	 */
 	private void drawSquare(Coords loc, Color colour, Graphics2D g) {
 		int x = loc.x * BLOCK_SIZE;
 		int y = loc.y * BLOCK_SIZE;

@@ -40,6 +40,9 @@ public class GUI implements UI {
 		gamePanel.update(grid);
 	}
 	
+	/**
+	 * Create the User Interface.
+	 */
 	private void buildGUI()
 	{
 		frame = new JFrame();
