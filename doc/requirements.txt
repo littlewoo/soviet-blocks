@@ -6,3 +6,9 @@ Iteration I (Basic Display):
 
 Window is displayed, shows game area, which shows current state of the game, 
 differentiating between pieces and empty areas. 
+
+Iteration II (Basic Display):
+
+Pieces appear at top of the screen, and fall once every 0.5 secs until they 
+reach the bottom of the screen, then disappear, and a new piece appears at top
+of screen.
