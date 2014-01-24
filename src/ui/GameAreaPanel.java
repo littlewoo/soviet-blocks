@@ -42,7 +42,7 @@ public class GameAreaPanel extends JPanel {
 	 */
 	public void update(Piece[][] newGrid) {
 		grid = newGrid;
-		paint(getGraphics());
+		repaint();
 	}
 	
 	/**

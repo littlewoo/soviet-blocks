@@ -36,6 +36,7 @@ public class Game {
 		grid = new Piece[size.width][size.height];
 		ui.updateGrid(grid);
 		gameLoop();
+		
 	}
 	
 	/**
@@ -44,24 +45,27 @@ public class Game {
 	private void gameLoop()
 	{
 		newPiece();
-		while (true) {
-			ui.updateGrid(grid);
-			tick();
-			if (atBottom()) {
-				deletePiece();
-				newPiece();
+		Thread t = new Thread() {
+			public void run() {
+				while (true) {
+					tick();
+					if (atBottom()) {
+						deletePiece();
+						newPiece();
+					}
+				}
 			}
-		}
+		};
+		t.start();
 	}
 	
 	/**
 	 * Wait for a tick, then drop the cursor 1 block.
 	 */
 	private void tick() {
+		System.out.println("Tick...");
 		timer.awaitNextTick();
-		deletePiece();
 		moveCursor(new Vector(0,1));
-		placePiece();
 	}
 	
 	/**
@@ -73,6 +77,7 @@ public class Game {
 		deletePiece();
 		cursor = cursor.add(offset);
 		placePiece();
+		ui.updateGrid(grid);
 	}
 
 	/**

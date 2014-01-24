@@ -29,7 +29,9 @@ public class Timer {
 	 */
 	public void tick()
 	{
+		
 		Thread t = new Thread() {
+		
 			public void run() {
 				while (true) {
 					try {
