@@ -18,6 +18,7 @@ import javax.swing.JPanel;
  *
  */
 public class GUI implements UI {
+	private final static Dimension size = new Dimension(10, 25); 
 	
 	private GameAreaPanel gamePanel;
 	private JFrame frame;
@@ -27,7 +28,7 @@ public class GUI implements UI {
 	 */
 	public GUI() {
 		buildGUI();
-		new Game(this);
+		new Game(this, size);
 	}
 	
 	/**
@@ -48,7 +49,7 @@ public class GUI implements UI {
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
-		gamePanel = new GameAreaPanel();
+		gamePanel = new GameAreaPanel(size);
 		frame.getContentPane().add(gamePanel);
 		frame.pack();
 	}

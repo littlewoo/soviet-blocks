@@ -1,6 +1,6 @@
 package ui;
 
-import game.Coords;
+import game.Vector;
 import game.Piece;
 
 import java.awt.Color;
@@ -16,20 +16,23 @@ import javax.swing.JPanel;
  * @author littlewoo
  */
 public class GameAreaPanel extends JPanel {
-	private static int GRID_WIDTH = 10;
-	private static int GRID_HEIGHT = 25;
+	private final int gridWidth;
+	private final int gridHeight;
 	private static int BLOCK_SIZE = 30;
-	private static int IMG_WIDTH = GRID_WIDTH * BLOCK_SIZE;
-	private static int IMG_HEIGHT = GRID_HEIGHT * BLOCK_SIZE;
+	private final int imgWidth;
+	private final int imgHeight;
 	
 	private Piece[][] grid;
 	
 	/**
 	 * Create a new GameAreaPanel.
 	 */
-	public GameAreaPanel() {
-		setPreferredSize(new Dimension(IMG_WIDTH, IMG_HEIGHT));
-		
+	public GameAreaPanel(Dimension size) {
+		gridWidth = size.width;
+		gridHeight = size.height;
+		imgWidth = gridWidth * BLOCK_SIZE;
+		imgHeight = gridHeight * BLOCK_SIZE;
+		setPreferredSize(new Dimension(imgWidth, imgHeight));
 	}
 	
 	/**
@@ -59,15 +62,15 @@ public class GameAreaPanel extends JPanel {
 	 * @param g the graphics to draw on.
 	 */
 	private void draw(Graphics2D g) {
-		for (int x=0; x<GRID_WIDTH; x++) {
-			for (int y=0; y<GRID_HEIGHT; y++) {
+		for (int x=0; x<gridWidth; x++) {
+			for (int y=0; y<gridHeight; y++) {
 				Color c;
 				if (grid[x][y] == null) {
 					c = Color.BLACK;
 				} else {
 					c = Color.WHITE;
 				}
-				drawSquare(new Coords(x,y), c, g);
+				drawSquare(new Vector(x,y), c, g);
 			}
 		}
 	}
@@ -79,7 +82,7 @@ public class GameAreaPanel extends JPanel {
 	 * @param colour the colour of the square
 	 * @param g the graphics to draw on
 	 */
-	private void drawSquare(Coords loc, Color colour, Graphics2D g) {
+	private void drawSquare(Vector loc, Color colour, Graphics2D g) {
 		int x = loc.x * BLOCK_SIZE;
 		int y = loc.y * BLOCK_SIZE;
 		g.setColor(colour);

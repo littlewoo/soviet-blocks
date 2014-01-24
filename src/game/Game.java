@@ -12,13 +12,13 @@ import ui.UI;
  */
 public class Game {
 	private final Dimension size;
-	private final Coords centre;
+	private final Vector centre;
 	
 	private Piece[][] grid;
 	private UI ui;
 	private Timer timer;
 	
-	private Coords cursor;
+	private Vector cursor;
 	private Piece activePiece;
 	
 	/**
@@ -31,7 +31,7 @@ public class Game {
 		this.ui = ui;
 		this.size = size;
 		timer = new Timer();
-		centre = new Coords(size.width / 2, 0);
+		centre = new Vector(size.width / 2, 0);
 		
 		grid = new Piece[size.width][size.height];
 		ui.updateGrid(grid);
@@ -60,7 +60,18 @@ public class Game {
 	private void tick() {
 		timer.awaitNextTick();
 		deletePiece();
-		cursor = new Coords(cursor.x, cursor.y + 1);
+		moveCursor(new Vector(0,1));
+		placePiece();
+	}
+	
+	/**
+	 * Move the cursor, and with it the active piece.
+	 * 
+	 * @param offset the vector by which the cursor is moved
+	 */
+	public void moveCursor(Vector offset) {
+		deletePiece();
+		cursor = cursor.add(offset);
 		placePiece();
 	}
 
@@ -97,7 +108,7 @@ public class Game {
 	 * @param piece the piece to place (null to delete)
 	 */
 	private void editPiece(Piece p) {
-		for (Coords co : activePiece.getOffsets()) {
+		for (Vector co : activePiece.getOffsets()) {
 			int x = co.x + cursor.x;
 			int y = co.y + cursor.y;
 			grid[x][y] = p;

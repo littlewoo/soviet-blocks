@@ -1,13 +1,16 @@
 package game;
 
+import java.util.concurrent.Semaphore;
+
 /**
  * Provides a timing service for the game. 
  * 
  * @author littlewoo
  */
 public class Timer {
-	private long timeOfNextTick;
 	private long timeBetweenTicks;
+	private boolean tickReady;
+	private Object lock = new Object();
 	
 	/**
 	 * Build a new timer.
@@ -15,8 +18,34 @@ public class Timer {
 	 */
 	public Timer()
 	{
-		timeOfNextTick = System.currentTimeMillis();
 		timeBetweenTicks = 600;
+		tickReady = false;
+		tick();
+	}
+	
+	/**
+	 * This method maintains the Timer's internal timer, by setting the 
+	 * tickReady flag when a tick is ready.
+	 */
+	public void tick()
+	{
+		Thread t = new Thread() {
+			public void run() {
+				while (true) {
+					try {
+						sleep(timeBetweenTicks);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					tickReady = true;
+			        synchronized (lock) {
+			        	lock.notify();
+			        }
+				}
+			}
+		};
+		t.start();
 	}
 	
 	/**
@@ -26,12 +55,16 @@ public class Timer {
 	 */
 	public void awaitNextTick()
 	{
-		while (true) { 
-			long time = System.currentTimeMillis();
-			if (time > timeOfNextTick) {
-				timeOfNextTick += timeBetweenTicks;
-				return;
-			}
+		synchronized (lock) {
+			while (!tickReady) {
+				try {
+					lock.wait();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} 
+			tickReady = false;
 		}
 	}
 	

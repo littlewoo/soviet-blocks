@@ -7,11 +7,11 @@ package game;
  */
 public class Piece {
 	
-	public Coords[] getOffsets()
+	public Vector[] getOffsets()
 	{
-		return new Coords[]{new Coords(0,0),
-							new Coords(-1,0),
-							new Coords(1,0),
-							new Coords(0,1)};
+		return new Vector[]{new Vector(0,0),
+							new Vector(-1,0),
+							new Vector(1,0),
+							new Vector(0,1)};
 	}
 }
