@@ -70,4 +70,17 @@ public class Timer {
 		}
 	}
 	
+	/**
+	 * Wait a fixed amount of time.
+	 * 
+	 * @param time the amount of time to wait, in milliseconds.
+	 */
+	public void await(long time) {
+		try {
+			Thread.sleep(time);
+		} catch (InterruptedException e) {
+			e.printStackTrace(); // Not a real solution. Don't know if this matters.
+		}
+	}
+	
 }

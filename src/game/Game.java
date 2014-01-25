@@ -21,6 +21,9 @@ public class Game {
 	private Vector cursor;
 	private Piece activePiece;
 	
+	private boolean acceptingInput;
+	private boolean running;
+	
 	/**
 	 * Creates a new game. For now, this is just a grid with Pieces for 
 	 * demonstration/testing.
@@ -35,6 +38,8 @@ public class Game {
 		
 		grid = new Piece[size.width][size.height];
 		ui.updateGrid(grid);
+		acceptingInput = true;
+		running = true;
 		gameLoop();
 		
 	}
@@ -48,10 +53,9 @@ public class Game {
 		Thread t = new Thread() {
 			public void run() {
 				while (true) {
-					tick();
-					if (atBottom()) {
-						deletePiece();
-						newPiece();
+					while (running) {
+						timer.awaitNextTick();
+						tick();
 					}
 				}
 			}
@@ -61,11 +65,42 @@ public class Game {
 	
 	/**
 	 * Wait for a tick, then drop the cursor 1 block.
+	 * 
 	 */
 	private void tick() {
-		System.out.println("Tick...");
-		timer.awaitNextTick();
 		moveCursor(new Vector(0,1));
+		if (isSettled()) {
+			timer.awaitNextTick();
+			if (isSettled()) {
+				newPiece();
+			}
+		}
+	}
+	
+	/**
+	 * Drop the current piece, as a result of player action. This action causes
+	 * the current piece to drop rapidly. Once it has started, the player cannot
+	 * give further input until the dropped piece has settled.
+	 * 
+	 */
+	public void drop() {
+		acceptingInput = false;
+		while (!isSettled()) {
+			moveCursor(new Vector(0,1));
+			timer.await(20);
+		}
+		acceptingInput = true;
+	}
+	
+	/** 
+	 * Move the current piece as a result of player action
+	 * 
+	 * @param offset the vector by which the current piece is moved
+	 */
+	public void movePiece(Vector offset) {
+		if (acceptingInput) {
+			moveCursor(offset);
+		}
 	}
 	
 	/**
@@ -73,11 +108,31 @@ public class Game {
 	 * 
 	 * @param offset the vector by which the cursor is moved
 	 */
-	public void moveCursor(Vector offset) {
-		deletePiece();
-		cursor = cursor.add(offset);
-		placePiece();
-		ui.updateGrid(grid);
+	private void moveCursor(Vector offset) {
+		if (checkMove(offset)) {
+			deletePiece();
+			cursor = cursor.add(offset);
+			placePiece();
+			ui.updateGrid(grid);
+		}
+	}
+	
+	/**
+	 * Check that a move is valid
+	 * 
+	 * @param offset the move
+	 */
+	public boolean checkMove(Vector offset) {
+		for (Vector v : activePiece.getOffsets()) {
+			Vector nv = v.add(offset).add(cursor);
+			if (nv.x < 0 || nv.x >= size.width ||
+				nv.y < 0 || nv.y >= size.height ||
+				(grid[nv.x][nv.y] != null &&
+				grid[nv.x][nv.y] != activePiece)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -86,7 +141,20 @@ public class Game {
 	private void newPiece()
 	{
 		cursor = centre;
-		activePiece = new Piece();
+		activePiece = Piece.getRandomPiece();
+		// make sure the new piece is always at the top, but not above it.
+		Vector[] v = activePiece.getOffsets();
+		for (int i=0; i<v.length; i++) {
+			Vector nv = v[i].add(cursor);
+			if (nv.y < 0) {
+				if (nv.y == -1) {
+					cursor = new Vector(cursor.x, cursor.y+1);
+				} else {
+					cursor = new Vector(cursor.x, cursor.y+2);
+				}
+				 
+			}
+		}
 		placePiece();
 	}
 	
@@ -121,14 +189,23 @@ public class Game {
 	}
 	
 	/**
-	 * Check whether the cursor is on the bottom row of the grid.
+	 * Check whether the active piece is resting on the bottom of the grid or
+	 * on another piece
 	 * 
 	 * @return true if it is at the bottom
 	 */
-	private boolean atBottom()
+	private boolean isSettled()
 	{
-		return cursor.y >= size.height-2; // TODO: -2 should be -1, when proper
-										  // settling is implemented
+		for (Vector v : activePiece.getOffsets()) {
+			Vector nv = v.add(cursor);
+			Vector below = nv.add(new Vector(0,1));
+			if (nv.y == size.height -1 ||
+				grid[below.x][below.y] != null &&
+				grid[below.x][below.y] != activePiece) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**
@@ -141,5 +218,14 @@ public class Game {
 				grid[x][y] = null;
 			}
 		}
+	}
+	
+	/**
+	 * Set the value of whether the game is running or not.
+	 * 
+	 * @param value whether the game is running
+	 */
+	public void setRunning(boolean value) {
+		running = value;
 	}
 }

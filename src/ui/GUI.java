@@ -25,6 +25,8 @@ public class GUI implements UI {
 	private static final int leftKey = KeyEvent.VK_A;
 	private static final int rightKey = KeyEvent.VK_E;
 	private static final int downKey = KeyEvent.VK_O;
+	private static final int newGameKey = KeyEvent.VK_N;
+	private static final int dropKey = KeyEvent.VK_SPACE;
 	
 	private GameAreaPanel gamePanel;
 	private Game game;
@@ -87,9 +89,15 @@ public class GUI implements UI {
 			moveOffset = new Vector(1,0);
 		} else if (key == downKey) {
 			moveOffset = new Vector(0,1);
+		} else if (key == newGameKey) {
+			game.setRunning(false);
+			game.clearGrid();
+			game = new Game(this, size);
+		} else if (key == dropKey) {
+			game.drop();
 		}
 		if (moveOffset != null) {
-			game.moveCursor(moveOffset);
+			game.movePiece(moveOffset);
 		}
 	}
 

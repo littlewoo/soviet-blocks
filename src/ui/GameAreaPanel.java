@@ -68,7 +68,7 @@ public class GameAreaPanel extends JPanel {
 				if (grid[x][y] == null) {
 					c = Color.BLACK;
 				} else {
-					c = Color.WHITE;
+					c = grid[x][y].getColour();
 				}
 				drawSquare(new Vector(x,y), c, g);
 			}
