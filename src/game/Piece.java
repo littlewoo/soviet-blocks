@@ -11,12 +11,29 @@ public class Piece {
 	private final PieceType type;
 	private static RandomEnum<PieceType> rand = new RandomEnum<>(PieceType.class);
 	
+	private int rotation;
+	
 	/**
 	 * Create a new piece
 	 * @param t the type of this piece
 	 */
 	private Piece(PieceType t) {
 		type = t;
+		rotation = 0;
+	}
+	
+	/**
+	 * Rotate this piece through 90 degrees clockwise.
+	 */
+	public void rotate() {
+		rotation = (rotation + 1) % 4;
+	}
+	
+	/**
+	 * Rotate this piece through 90 degrees anti-clockwise
+	 */
+	public void reverseRotate() {
+		rotation = (rotation - 1) % 4;
 	}
 	
 	/**
@@ -25,7 +42,7 @@ public class Piece {
 	 */
 	public Vector[] getOffsets()
 	{
-		return type.offsets;
+		return type.offsets[rotation];
 	}
 	
 	/**
@@ -51,32 +68,53 @@ public class Piece {
 	 */
 	private enum PieceType {
 
-		LONG(new Vector[]{
-				new Vector(-1,0),new Vector(0,0),new Vector(1,0),new Vector(2,0)}, 
-				Color.RED),
-		ELL(new Vector[]{
-				new Vector(-1,0),new Vector(0,0),new Vector(0,1),new Vector(0,2)}, 
-				Color.YELLOW),
-		PEE(new Vector[]{
-				new Vector(0,0),new Vector(1,0),new Vector(0,1),new Vector(0,2)}, 
-				Color.MAGENTA),
-		TEE(new Vector[]{
-				new Vector(-1,0),new Vector(0,0),new Vector(0,1),new Vector(1,0)}, 
-				Color.GREEN),
-		ESS(new Vector[]{
-				new Vector(1,0),new Vector(0,0),new Vector(0,1),new Vector(-1,1)}, 
-				Color.BLUE),
-		ZED(new Vector[]{
-				new Vector(-1,0),new Vector(0,0),new Vector(0,1),new Vector(1,1)}, 
-				Color.CYAN),
-		SQUARE(new Vector[]{
-				new Vector(0,0),new Vector(0,1),new Vector(1,1),new Vector(1,0)}, 
-				Color.GRAY);
+		LONG(new Vector[][]{
+				{new Vector(-1,0),new Vector(0,0),new Vector(1,0),new Vector(2,0)},
+				{new Vector(0,-1),new Vector(0,0),new Vector(0,1),new Vector(0,2)},
+				{new Vector(-1,0),new Vector(0,0),new Vector(1,0),new Vector(2,0)},
+				{new Vector(0,-1),new Vector(0,0),new Vector(0,1),new Vector(0,2)}
+				}, Color.RED),
+		ELL(new Vector[][]{
+				{new Vector(-1,0),new Vector(0,0),new Vector(0,1),new Vector(0,2)},
+				{new Vector(0,0),new Vector(0,1),new Vector(-1,1),new Vector(-2,1)},
+				{new Vector(-1,-1),new Vector(-1,0),new Vector(-1,1),new Vector(0,1)},
+				{new Vector(-1,0),new Vector(-1,1),new Vector(1,0),new Vector(0,0)}
+				}, Color.YELLOW),
+		PEE(new Vector[][]{
+				{new Vector(0,0),new Vector(1,0),new Vector(0,1),new Vector(0,2)}, 
+				{new Vector(0,0),new Vector(-1,0),new Vector(1,0),new Vector(1,1)},
+				{new Vector(1,-1),new Vector(1,0),new Vector(1,1),new Vector(0,1)},
+				{new Vector(0,0),new Vector(0,1),new Vector(1,1),new Vector(2,1)}
+				}, Color.MAGENTA),
+		TEE(new Vector[][]{
+				{new Vector(-1,0),new Vector(0,0),new Vector(0,-1),new Vector(1,0)}, 
+				{new Vector(0,0),new Vector(0,-1),new Vector(1,0),new Vector(0,1)},
+				{new Vector(0,0),new Vector(-1,0),new Vector(0,1),new Vector(1,0)},
+				{new Vector(0,0),new Vector(0,1),new Vector(-1,0),new Vector(0,-1)}
+				}, Color.GREEN),
+		ESS(new Vector[][]{
+				{new Vector(1,0),new Vector(0,0),new Vector(0,1),new Vector(-1,1)}, 
+				{new Vector(0,0),new Vector(-1,-1),new Vector(-1,0),new Vector(0,1)},
+				{new Vector(1,0),new Vector(0,0),new Vector(0,1),new Vector(-1,1)}, 
+				{new Vector(0,0),new Vector(-1,-1),new Vector(-1,0),new Vector(0,1)}
+				}, Color.BLUE),
+		ZED(new Vector[][]{
+				{new Vector(-1,0),new Vector(0,0),new Vector(0,1),new Vector(1,1)}, 
+				{new Vector(0,0),new Vector(1,0),new Vector(1,-1),new Vector(0,1)},
+				{new Vector(-1,0),new Vector(0,0),new Vector(0,1),new Vector(1,1)}, 
+				{new Vector(0,0),new Vector(1,0),new Vector(1,-1),new Vector(0,1)}
+				}, Color.CYAN),
+		SQUARE(new Vector[][]{
+				{new Vector(0,0),new Vector(0,1),new Vector(1,1),new Vector(1,0)}, 
+				{new Vector(0,0),new Vector(0,1),new Vector(1,1),new Vector(1,0)}, 
+				{new Vector(0,0),new Vector(0,1),new Vector(1,1),new Vector(1,0)}, 
+				{new Vector(0,0),new Vector(0,1),new Vector(1,1),new Vector(1,0)}
+				}, Color.GRAY);
 		
 		public final Color colour;
-		public final Vector[] offsets;
+		public final Vector[][] offsets;
 		
-		PieceType(Vector[] o, Color c) {
+		PieceType(Vector[][] o, Color c) {
 			offsets = o;
 			colour = c;
 		}

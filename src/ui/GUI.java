@@ -22,11 +22,12 @@ import javax.swing.JPanel;
  */
 public class GUI implements UI {
 	private final static Dimension size = new Dimension(10, 25); 
-	private static final int leftKey = KeyEvent.VK_A;
-	private static final int rightKey = KeyEvent.VK_E;
-	private static final int downKey = KeyEvent.VK_O;
+	private static final int leftKey = KeyEvent.VK_LEFT;
+	private static final int rightKey = KeyEvent.VK_RIGHT;
+	private static final int downKey = KeyEvent.VK_DOWN;
 	private static final int newGameKey = KeyEvent.VK_N;
 	private static final int dropKey = KeyEvent.VK_SPACE;
+	private static final int rotateKey = KeyEvent.VK_UP;
 	
 	private GameAreaPanel gamePanel;
 	private Game game;
@@ -71,10 +72,10 @@ public class GUI implements UI {
 	{
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
 		gamePanel = new GameAreaPanel(size);
 		frame.getContentPane().add(gamePanel);
 		frame.pack();
+		frame.setVisible(true);
 	}
 	
 	/**
@@ -95,6 +96,8 @@ public class GUI implements UI {
 			game = new Game(this, size);
 		} else if (key == dropKey) {
 			game.drop();
+		} else if (key == rotateKey) {
+			game.rotate();
 		}
 		if (moveOffset != null) {
 			game.movePiece(moveOffset);

@@ -65,7 +65,7 @@ public class GameAreaPanel extends JPanel {
 		for (int x=0; x<gridWidth; x++) {
 			for (int y=0; y<gridHeight; y++) {
 				Color c;
-				if (grid[x][y] == null) {
+				if (grid == null || grid[x][y] == null) {
 					c = Color.BLACK;
 				} else {
 					c = grid[x][y].getColour();

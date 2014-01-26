@@ -92,6 +92,19 @@ public class Game {
 		acceptingInput = true;
 	}
 	
+	/**
+	 * Rotate the active piece through 90 degrees
+	 */
+	public void rotate() {
+		deletePiece();
+		activePiece.rotate();
+		if (!checkNewPlacement(getActivePieceLoc())) {
+			activePiece.reverseRotate();
+		}
+		placePiece();
+		ui.updateGrid(grid);
+	}
+	
 	/** 
 	 * Move the current piece as a result of player action
 	 * 
@@ -123,16 +136,43 @@ public class Game {
 	 * @param offset the move
 	 */
 	public boolean checkMove(Vector offset) {
-		for (Vector v : activePiece.getOffsets()) {
-			Vector nv = v.add(offset).add(cursor);
-			if (nv.x < 0 || nv.x >= size.width ||
-				nv.y < 0 || nv.y >= size.height ||
-				(grid[nv.x][nv.y] != null &&
-				grid[nv.x][nv.y] != activePiece)) {
+		Vector[] v = getActivePieceLoc();
+		Vector[] nv = new Vector[v.length];
+		for (int i=0; i<v.length; i++) {
+			nv[i] = v[i].add(offset);
+		}
+		return checkNewPlacement(nv);
+	}
+	
+	/**
+	 * Check that a placement of the active piece is valid: i.e. that it is 
+	 * entirely within the bounds of the grid and it does not intersect any
+	 * existing pieces.
+	 * 
+	 * @param offsets the new offsets of the placed piece.
+	 */
+	private boolean checkNewPlacement(Vector[] offsets) {
+		for (Vector v : offsets) {
+			if (v.x < 0 || v.x >= size.width || 
+				v.y < 0 || v.y >= size.height ||
+				(grid[v.x][v.y] != null && grid[v.x][v.y] != activePiece)) {
 				return false;
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * Get the current active piece's offsets, in their current location in the
+	 * grid.
+	 */
+	private Vector[] getActivePieceLoc() {
+		final Vector[] v = activePiece.getOffsets();
+		Vector[] r = new Vector[v.length];
+		for (int i=0; i<v.length; i++) {
+			r[i] = v[i].add(cursor);
+		}
+		return r;
 	}
 
 	/**
@@ -143,11 +183,10 @@ public class Game {
 		cursor = centre;
 		activePiece = Piece.getRandomPiece();
 		// make sure the new piece is always at the top, but not above it.
-		Vector[] v = activePiece.getOffsets();
+		Vector[] v = getActivePieceLoc();
 		for (int i=0; i<v.length; i++) {
-			Vector nv = v[i].add(cursor);
-			if (nv.y < 0) {
-				if (nv.y == -1) {
+			if (v[i].y < 0) {
+				if (v[i].y == -1) {
 					cursor = new Vector(cursor.x, cursor.y+1);
 				} else {
 					cursor = new Vector(cursor.x, cursor.y+2);
@@ -181,10 +220,8 @@ public class Game {
 	 * @param piece the piece to place (null to delete)
 	 */
 	private void editPiece(Piece p) {
-		for (Vector co : activePiece.getOffsets()) {
-			int x = co.x + cursor.x;
-			int y = co.y + cursor.y;
-			grid[x][y] = p;
+		for (Vector v : getActivePieceLoc()) {
+			grid[v.x][v.y] = p;
 		}
 	}
 	
@@ -196,10 +233,9 @@ public class Game {
 	 */
 	private boolean isSettled()
 	{
-		for (Vector v : activePiece.getOffsets()) {
-			Vector nv = v.add(cursor);
-			Vector below = nv.add(new Vector(0,1));
-			if (nv.y == size.height -1 ||
+		for (Vector v : getActivePieceLoc()) {
+			Vector below = v.add(new Vector(0,1));
+			if (v.y == size.height -1 ||
 				grid[below.x][below.y] != null &&
 				grid[below.x][below.y] != activePiece) {
 				return true;
