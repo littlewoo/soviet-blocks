@@ -83,4 +83,10 @@ public class Timer {
 		}
 	}
 	
+	/**
+	 * Level up: reduce the amount of time between ticks by 10%
+	 */
+	public void levelUp() {
+		timeBetweenTicks = (long) (timeBetweenTicks * 0.9);
+	}
 }

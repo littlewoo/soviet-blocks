@@ -66,6 +66,26 @@ public class GUI implements UI {
 	}
 	
 	/**
+	 * Update the score.
+	 * 
+	 * @param score the new score.
+	 */
+	@Override
+	public void updateScore(int score) {
+		System.out.println("Score: " + score);
+	}
+	
+	/**
+	 * Respond to a game over state
+	 */
+	@Override
+	public void gameOver() {
+		System.out.println("GAME OVER! Press (" + 
+							KeyEvent.getKeyText(newGameKey) + 
+							") to start a new game.");
+	}
+	
+	/**
 	 * Create the User Interface.
 	 */
 	private void buildGUI()
@@ -107,4 +127,16 @@ public class GUI implements UI {
 	public static void main(String[] args) {
 		new GUI();
 	}
+
+	/**
+	 * Level up
+	 * 
+	 * @param newLevel the new level.
+	 */
+	@Override
+	public void levelUp(int newLevel) {
+		System.out.println("Levelled up! " + newLevel);
+	}
+
+
 }

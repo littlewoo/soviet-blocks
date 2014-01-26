@@ -24,6 +24,9 @@ public class Game {
 	private boolean acceptingInput;
 	private boolean running;
 	
+	private int score;
+	private int level;
+	
 	/**
 	 * Creates a new game. For now, this is just a grid with Pieces for 
 	 * demonstration/testing.
@@ -38,8 +41,13 @@ public class Game {
 		
 		grid = new Piece[size.width][size.height];
 		ui.updateGrid(grid);
+		
 		acceptingInput = true;
 		running = true;
+		
+		score = 0;
+		level = 0;
+		
 		gameLoop();
 		
 	}
@@ -73,9 +81,63 @@ public class Game {
 			timer.awaitNextTick();
 			if (isSettled()) {
 				newPiece();
+				checkLines();
 			}
 		}
 	}
+	
+	/** 
+	 * Check to see whether there are any lines, and remove them if there are.
+	 */
+	public void checkLines() {
+		boolean[] lines = new boolean[grid[0].length];
+		boolean line = false;
+		for (int y=0; y<lines.length; y++) {
+			lines[y] = true;
+			for (int x=0; x<grid.length; x++) {
+				if (grid[x][y] == null) {
+					lines[y] = false;
+					line = true;
+					break;
+				}
+			}
+		}
+		if (line) {
+			for (int i=0; i<lines.length; i++) {
+				if (lines[i]) {
+					line(i);
+				}
+			}
+		}
+	}
+	
+	private void line(int index) {
+		score ++;
+		ui.updateScore(score);
+		if (score % 10 == 0) {
+			level ++;
+			timer.levelUp();
+			ui.levelUp(level);
+		}
+		removeLine(index);
+	}
+	
+	/**
+	 * Remove a line from the grid, and move all lines above it down.
+	 * 
+	 * @param index the index of the line to remove
+	 */
+	private void removeLine(int index) {
+		deletePiece();
+		for (int i=index; i>0; i--) {
+			for (int j=0; j<grid.length; j++) {
+				grid[j][i] = grid[j][i-1];
+			}
+		}
+		placePiece();
+		ui.updateGrid(grid);
+	}
+	
 	
 	/**
 	 * Drop the current piece, as a result of player action. This action causes
@@ -194,6 +256,12 @@ public class Game {
 				 
 			}
 		}
+		v = getActivePieceLoc();
+		for (int i=0; i<v.length; i++) {
+			if (grid[v[i].x][v[i].y] != null) {
+				gameOver();
+			}
+		}
 		placePiece();
 	}
 	
@@ -254,6 +322,15 @@ public class Game {
 				grid[x][y] = null;
 			}
 		}
+	}
+	
+	/**
+	 * Game over - what happens when there is no room for a new piece.
+	 */
+	private void gameOver() {
+		running = false;
+		acceptingInput = false;
+		ui.gameOver();
 	}
 	
 	/**

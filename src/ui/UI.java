@@ -14,6 +14,22 @@ public interface UI {
 	 * 
 	 * @param grid the game area, a 10x25 grid containing Pieces
 	 */
-	public void updateGrid(Piece[][] grid);
+	void updateGrid(Piece[][] grid);
 
+	/** 
+	 * update the score of the game.
+	 * 
+	 * @param score the new score.
+	 */
+	void updateScore(int score);
+	
+	/**
+	 * Update the game to a game over state
+	 */
+	void gameOver();
+
+	/**
+	 * Level up
+	 */
+	void levelUp(int newLevel);
 }
