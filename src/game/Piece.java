@@ -1,6 +1,7 @@
 package game;
 
 import java.awt.Color;
+import java.util.Random;
 
 /**
  * A 4-block piece.
@@ -9,7 +10,8 @@ import java.awt.Color;
  */
 public class Piece {
 	private final PieceType type;
-	private static RandomEnum<PieceType> rand = new RandomEnum<>(PieceType.class);
+	private static RandomEnum<PieceType> randPiece = new RandomEnum<>(PieceType.class);
+	private static Random randNo = new Random();
 	
 	private int rotation;
 	
@@ -17,9 +19,9 @@ public class Piece {
 	 * Create a new piece
 	 * @param t the type of this piece
 	 */
-	private Piece(PieceType t) {
+	private Piece(PieceType t, int rot) {
 		type = t;
-		rotation = 0;
+		rotation = rot;
 	}
 	
 	/**
@@ -59,7 +61,7 @@ public class Piece {
 	 */
 	public static Piece getRandomPiece()
 	{
-		return new Piece(rand.getRandomValue()); 
+		return new Piece(randPiece.getRandomValue(), randNo.nextInt(4)); 
 	}
 	
 	/**
@@ -75,16 +77,16 @@ public class Piece {
 				{new Vector(0,-1),new Vector(0,0),new Vector(0,1),new Vector(0,2)}
 				}, Color.RED),
 		ELL(new Vector[][]{
-				{new Vector(-1,0),new Vector(0,0),new Vector(0,1),new Vector(0,2)},
-				{new Vector(0,0),new Vector(0,1),new Vector(-1,1),new Vector(-2,1)},
-				{new Vector(-1,-1),new Vector(-1,0),new Vector(-1,1),new Vector(0,1)},
-				{new Vector(-1,0),new Vector(-1,1),new Vector(1,0),new Vector(0,0)}
+				{new Vector(0,0),new Vector(0,-1),new Vector(0,1),new Vector(1,1)},
+				{new Vector(0,0),new Vector(-1,0),new Vector(1,0),new Vector(1,-1)},
+				{new Vector(0,0),new Vector(0,1),new Vector(0,-1),new Vector(-1,-1)},
+				{new Vector(0,0),new Vector(-1,0),new Vector(-1,1),new Vector(1,0)}
 				}, Color.YELLOW),
-		PEE(new Vector[][]{
-				{new Vector(0,0),new Vector(1,0),new Vector(0,1),new Vector(0,2)}, 
+		JAY(new Vector[][]{
+				{new Vector(0,0),new Vector(0,-1),new Vector(0,1),new Vector(-1,1)}, 
 				{new Vector(0,0),new Vector(-1,0),new Vector(1,0),new Vector(1,1)},
-				{new Vector(1,-1),new Vector(1,0),new Vector(1,1),new Vector(0,1)},
-				{new Vector(0,0),new Vector(0,1),new Vector(1,1),new Vector(2,1)}
+				{new Vector(0,0),new Vector(0,1),new Vector(0,-1),new Vector(1,-1)},
+				{new Vector(0,0),new Vector(-1,0),new Vector(1,0),new Vector(-1,-1)}
 				}, Color.MAGENTA),
 		TEE(new Vector[][]{
 				{new Vector(-1,0),new Vector(0,0),new Vector(0,-1),new Vector(1,0)}, 
