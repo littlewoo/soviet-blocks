@@ -22,7 +22,7 @@ public class GameAreaPanel extends JPanel {
 	private final int imgWidth;
 	private final int imgHeight;
 	
-	private Piece[][] grid;
+	protected Piece[][] grid;
 	
 	/**
 	 * Create a new GameAreaPanel.
@@ -61,7 +61,7 @@ public class GameAreaPanel extends JPanel {
 	 * 
 	 * @param g the graphics to draw on.
 	 */
-	private void draw(Graphics2D g) {
+	protected void draw(Graphics2D g) {
 		for (int x=0; x<gridWidth; x++) {
 			for (int y=0; y<gridHeight; y++) {
 				Color c;

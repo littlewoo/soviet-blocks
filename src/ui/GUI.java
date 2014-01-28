@@ -4,15 +4,15 @@ import game.Game;
 import game.Piece;
 import game.Vector;
 
-import java.awt.Color;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.border.BevelBorder;
+import java.awt.FlowLayout;
 
 /**
  * A graphical user interface.
@@ -30,6 +30,10 @@ public class GUI implements UI {
 	private static final int rotateKey = KeyEvent.VK_UP;
 	
 	private GameAreaPanel gamePanel;
+	private PreviewPanel previewPanel;
+	private NumericalInfoPanel scorePanel;
+	private NumericalInfoPanel levelPanel;
+	
 	private Game game;
 	private JFrame frame;
 	
@@ -72,7 +76,17 @@ public class GUI implements UI {
 	 */
 	@Override
 	public void updateScore(int score) {
-		System.out.println("Score: " + score);
+		scorePanel.updateValue(String.format("%08d", score));
+	}
+	
+	/**
+	 * Update the next piece preview.
+	 * 
+	 * @param piece the next piece
+	 */
+	@Override
+	public void updateNextPiece(Piece p) {
+		previewPanel.updateNextPiece(p);
 	}
 	
 	/**
@@ -90,10 +104,32 @@ public class GUI implements UI {
 	 */
 	private void buildGUI()
 	{
+		gamePanel = new GameAreaPanel(size);
+		gamePanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		FlowLayout flowLayout = (FlowLayout) gamePanel.getLayout();
+		
+		JPanel infoPanel = new JPanel();
+		infoPanel.setLayout(new BorderLayout());
+		scorePanel = new NumericalInfoPanel("Score");
+		scorePanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		previewPanel = new PreviewPanel();
+		previewPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		levelPanel = new NumericalInfoPanel("Level");
+		previewPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		infoPanel.add(scorePanel, BorderLayout.NORTH);
+		infoPanel.add(previewPanel, BorderLayout.CENTER);
+		infoPanel.add(levelPanel, BorderLayout.SOUTH);
+		
+		JPanel panel = new JPanel();
+		panel.setLayout(new BorderLayout());
+		
+		panel.add(gamePanel, BorderLayout.CENTER);
+		panel.add(infoPanel, BorderLayout.EAST);
+		
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		gamePanel = new GameAreaPanel(size);
-		frame.getContentPane().add(gamePanel);
+		frame.getContentPane().add(panel);
+				
 		frame.pack();
 		frame.setVisible(true);
 	}
@@ -113,6 +149,7 @@ public class GUI implements UI {
 		} else if (key == newGameKey) {
 			game.setRunning(false);
 			game.clearGrid();
+			updateScore(0);
 			game = new Game(this, size);
 		} else if (key == dropKey) {
 			game.drop();
@@ -135,7 +172,7 @@ public class GUI implements UI {
 	 */
 	@Override
 	public void levelUp(int newLevel) {
-		System.out.println("Levelled up! " + newLevel);
+		levelPanel.updateValue("" + newLevel);
 	}
 
 

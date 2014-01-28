@@ -32,4 +32,11 @@ public interface UI {
 	 * Level up
 	 */
 	void levelUp(int newLevel);
+
+	/**
+	 * Update the next piece preview
+	 * 
+	 * @param p the next piece
+	 */
+	void updateNextPiece(Piece p);
 }

@@ -20,6 +20,7 @@ public class Game {
 	
 	private Vector cursor;
 	private Piece activePiece;
+	private Piece nextPiece;
 	
 	private boolean acceptingInput;
 	private boolean running;
@@ -57,6 +58,7 @@ public class Game {
 	 */
 	private void gameLoop()
 	{
+		nextPiece = Piece.getRandomPiece();
 		newPiece();
 		Thread t = new Thread() {
 			public void run() {
@@ -82,6 +84,7 @@ public class Game {
 			if (isSettled()) {
 				newPiece();
 				checkLines();
+				addScore(10);
 			}
 		}
 	}
@@ -103,23 +106,32 @@ public class Game {
 			}
 		}
 		if (line) {
+			int noLines = 0;
 			for (int i=0; i<lines.length; i++) {
 				if (lines[i]) {
 					line(i);
+					noLines ++;
 				}
+			}
+			if (noLines > 0) {
+				addScore(noLines * 50);
 			}
 		}
 	}
 	
 	private void line(int index) {
-		score ++;
+		addScore(100);
+		removeLine(index);
+	}
+	
+	private void addScore(int s) {
+		score += s;
 		ui.updateScore(score);
-		if (score % 10 == 0) {
+		if (score / 1000 > level) {
 			level ++;
 			timer.levelUp();
 			ui.levelUp(level);
 		}
-		removeLine(index);
 	}
 	
 	/**
@@ -151,6 +163,7 @@ public class Game {
 			moveCursor(new Vector(0,1));
 			timer.await(20);
 		}
+		addScore(10);
 		acceptingInput = true;
 	}
 	
@@ -243,7 +256,9 @@ public class Game {
 	private void newPiece()
 	{
 		cursor = centre;
-		activePiece = Piece.getRandomPiece();
+		activePiece = nextPiece;
+		nextPiece = Piece.getRandomPiece();
+		ui.updateNextPiece(nextPiece);
 		// make sure the new piece is always at the top, but not above it.
 		Vector[] v = getActivePieceLoc();
 		for (int i=0; i<v.length; i++) {
