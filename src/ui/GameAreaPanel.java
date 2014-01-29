@@ -1,13 +1,17 @@
 package ui;
 
-import game.Vector;
 import game.Piece;
+import game.Vector;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 /**
@@ -24,6 +28,9 @@ public class GameAreaPanel extends JPanel {
 	
 	protected Piece[][] grid;
 	
+	private BufferedImage blockImage;
+	private BlockImageHandler blockImageHandler;
+	
 	/**
 	 * Create a new GameAreaPanel.
 	 */
@@ -33,6 +40,10 @@ public class GameAreaPanel extends JPanel {
 		imgWidth = gridWidth * BLOCK_SIZE;
 		imgHeight = gridHeight * BLOCK_SIZE;
 		setPreferredSize(new Dimension(imgWidth, imgHeight));
+		setMinimumSize(new Dimension(imgWidth, imgHeight));
+		
+		File f = new File("D:/Users/jdl/prog/soviet-blocks/assets/block.png");
+		blockImageHandler = new BlockImageHandler(f);
 	}
 	
 	/**
@@ -64,13 +75,12 @@ public class GameAreaPanel extends JPanel {
 	protected void draw(Graphics2D g) {
 		for (int x=0; x<gridWidth; x++) {
 			for (int y=0; y<gridHeight; y++) {
-				Color c;
 				if (grid == null || grid[x][y] == null) {
-					c = Color.BLACK;
+					drawSquare(new Vector(x,y), Color.BLACK, g);
 				} else {
-					c = grid[x][y].getColour();
+					Color c = grid[x][y].getColour();
+					drawBlock(new Vector(x,y), c, g);
 				}
-				drawSquare(new Vector(x,y), c, g);
 			}
 		}
 	}
@@ -87,5 +97,16 @@ public class GameAreaPanel extends JPanel {
 		int y = loc.y * BLOCK_SIZE;
 		g.setColor(colour);
 		g.fillRect(x, y, BLOCK_SIZE, BLOCK_SIZE);
+	}
+	
+	/**
+	 * Draw a block.
+	 * @param loc the grid coordinates of the block
+	 * @param g the graphics to draw on
+	 */
+	private void drawBlock(Vector loc, Color colour, Graphics2D g) {
+		int x = loc.x * BLOCK_SIZE;
+		int y = loc.y * BLOCK_SIZE;
+		g.drawImage(blockImageHandler.getColouredBlock(colour), null, x, y);
 	}
 }

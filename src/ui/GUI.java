@@ -11,8 +11,27 @@ import java.awt.event.KeyListener;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import java.awt.FlowLayout;
+import javax.swing.BoxLayout;
+import java.awt.Component;
+import java.awt.Color;
+import java.awt.GridLayout;
+import java.awt.CardLayout;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.RowSpec;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import java.awt.SystemColor;
 
 /**
  * A graphical user interface.
@@ -36,6 +55,14 @@ public class GUI implements UI {
 	
 	private Game game;
 	private JFrame frame;
+	private JMenuBar menuBar;
+	private JMenu mnGame;
+	private JMenu mnHelp;
+	private JMenuItem mntmAbout;
+	private JMenuItem mntmHowToPlay;
+	private JMenuItem mntmNewGame;
+	private JMenuItem mntmQuit;
+	private JMenuItem mntmHighScores;
 	
 	/**
 	 * Builds a new GUI.
@@ -104,33 +131,85 @@ public class GUI implements UI {
 	 */
 	private void buildGUI()
 	{
-		gamePanel = new GameAreaPanel(size);
-		gamePanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		FlowLayout flowLayout = (FlowLayout) gamePanel.getLayout();
-		
-		JPanel infoPanel = new JPanel();
-		infoPanel.setLayout(new BorderLayout());
-		scorePanel = new NumericalInfoPanel("Score");
-		scorePanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		previewPanel = new PreviewPanel();
-		previewPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		levelPanel = new NumericalInfoPanel("Level");
-		previewPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		infoPanel.add(scorePanel, BorderLayout.NORTH);
-		infoPanel.add(previewPanel, BorderLayout.CENTER);
-		infoPanel.add(levelPanel, BorderLayout.SOUTH);
 		
 		JPanel panel = new JPanel();
-		panel.setLayout(new BorderLayout());
-		
-		panel.add(gamePanel, BorderLayout.CENTER);
-		panel.add(infoPanel, BorderLayout.EAST);
+		panel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		panel.setLayout(new BorderLayout(2, 2));
 		
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().add(panel);
+		gamePanel = new GameAreaPanel(size);
+		gamePanel.setBackground(SystemColor.menu);
+		gamePanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		gamePanel.setPreferredSize(new Dimension(300, 775));
+		gamePanel.setMinimumSize(new Dimension(10, 10));
+		panel.add(gamePanel, BorderLayout.CENTER);
+		
+		JPanel infoPanel = new JPanel();
+		panel.add(infoPanel, BorderLayout.EAST);
+		GridBagLayout gbl_infoPanel = new GridBagLayout();
+		gbl_infoPanel.columnWidths = new int[] {150};
+		gbl_infoPanel.rowHeights = new int[] {150, 30, 75, 75, 300};
+		gbl_infoPanel.columnWeights = new double[]{0.0};
+		gbl_infoPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0};
+		infoPanel.setLayout(gbl_infoPanel);
+		previewPanel = new PreviewPanel();
+		previewPanel.setMaximumSize(new Dimension(500, 500));
+		previewPanel.setBackground(Color.BLACK);
+		previewPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		previewPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		previewPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		GridBagConstraints gbc_previewPanel = new GridBagConstraints();
+		gbc_previewPanel.insets = new Insets(0, 0, 5, 0);
+		gbc_previewPanel.anchor = GridBagConstraints.WEST;
+		gbc_previewPanel.fill = GridBagConstraints.VERTICAL;
+		gbc_previewPanel.gridx = 0;
+		gbc_previewPanel.gridy = 0;
+		infoPanel.add(previewPanel, gbc_previewPanel);
+		scorePanel = new NumericalInfoPanel("Score");
+		BorderLayout borderLayout_1 = (BorderLayout) scorePanel.getLayout();
+		scorePanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		GridBagConstraints gbc_scorePanel = new GridBagConstraints();
+		gbc_scorePanel.insets = new Insets(0, 0, 5, 0);
+		gbc_scorePanel.fill = GridBagConstraints.BOTH;
+		gbc_scorePanel.gridx = 0;
+		gbc_scorePanel.gridy = 2;
+		infoPanel.add(scorePanel, gbc_scorePanel);
+		levelPanel = new NumericalInfoPanel("Level");
+		BorderLayout borderLayout = (BorderLayout) levelPanel.getLayout();
+		GridBagConstraints gbc_levelPanel = new GridBagConstraints();
+		gbc_levelPanel.insets = new Insets(0, 0, 5, 0);
+		gbc_levelPanel.fill = GridBagConstraints.BOTH;
+		gbc_levelPanel.gridx = 0;
+		gbc_levelPanel.gridy = 3;
+		infoPanel.add(levelPanel, gbc_levelPanel);
 				
 		frame.pack();
+		
+		menuBar = new JMenuBar();
+		frame.setJMenuBar(menuBar);
+		
+		mnGame = new JMenu("Game");
+		menuBar.add(mnGame);
+		
+		mntmNewGame = new JMenuItem("New Game");
+		mnGame.add(mntmNewGame);
+		
+		mntmHighScores = new JMenuItem("High Scores");
+		mnGame.add(mntmHighScores);
+		
+		mntmQuit = new JMenuItem("Quit");
+		mnGame.add(mntmQuit);
+		
+		mnHelp = new JMenu("Help");
+		menuBar.add(mnHelp);
+		
+		mntmHowToPlay = new JMenuItem("How to play");
+		mnHelp.add(mntmHowToPlay);
+		
+		mntmAbout = new JMenuItem("About");
+		mnHelp.add(mntmAbout);
 		frame.setVisible(true);
 	}
 	

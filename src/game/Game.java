@@ -47,7 +47,8 @@ public class Game {
 		running = true;
 		
 		score = 0;
-		level = 0;
+		level = 1;
+		ui.levelUp(level);
 		
 		gameLoop();
 		
